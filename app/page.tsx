@@ -338,7 +338,7 @@ export default function Home() {
             <a className="btn btn-primary" href="#contact">
               Contact me <ArrowUpRight size={17} />
             </a>
-            <a className="btn btn-outline" href="/resume.pdf" download>
+            <a className="btn btn-outline" href="resume-Mohd_Jahidul_Islam-Water_Treatment_Expert.pdf" download>
               Download CV <Download size={16} />
             </a>
           </div>
