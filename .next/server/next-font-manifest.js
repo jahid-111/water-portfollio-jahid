@@ -1,1 +1,1 @@
-self.__NEXT_FONT_MANIFEST="{\"pages\":{},\"app\":{},\"appUsingSizeAdjust\":false,\"pagesUsingSizeAdjust\":false}"
+self.__NEXT_FONT_MANIFEST="{\"pages\":{},\"app\":{\"/Volumes/Programming/Ai/v-2--jahidul-water-operator-portfolio-updated/app/layout\":[\"static/media/0e96d314a90a6138-s.p.woff2\",\"static/media/b7ea2ab4a8ad1f81-s.p.woff2\",\"static/media/13971731025ec697-s.p.woff2\",\"static/media/8760c4774489e4ba-s.p.woff2\"]},\"appUsingSizeAdjust\":true,\"pagesUsingSizeAdjust\":false}"

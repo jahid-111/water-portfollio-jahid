@@ -1,8 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-  ArrowDownRight,
   ArrowUpRight,
   Award,
   Check,
@@ -30,46 +29,61 @@ import {
   X,
 } from "lucide-react";
 
+const EMAIL = "jahidjob5@outlook.com";
+const WHATSAPP_NUMBER = "966578277451";
+const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+  "Hello Jahidul, I checked out your portfolio and am impressed with your work. Are you available to discuss an opportunity?",
+)}`;
+const CV_URL = "/resume-Mohd_Jahidul_Islam-Water_Treatment_Expert.pdf";
+
+const navLinks = [
+  { href: "#about", label: "About" },
+  { href: "#expertise", label: "Expertise" },
+  { href: "#experience", label: "Experience" },
+  { href: "#projects", label: "Projects" },
+  { href: "#process", label: "RO Process" },
+  { href: "#scada", label: "SCADA Demo" },
+  { href: "#contact", label: "Contact" },
+];
+
+const CV_NOTE =
+  "Listed project reference in the supplied CV. The CV identifies the project location and stated capacity; it does not specify individual duties for this project.";
+
 const projects = [
   {
     name: "NAQUA",
     location: "Al-Lith, Saudi Arabia",
     capacity: "1 MLD",
     type: "Water treatment project",
-    details:
-      "Listed project reference in the supplied CV. The CV identifies the project location and stated capacity; it does not specify individual duties for this project.",
+    details: CV_NOTE,
   },
   {
     name: "AMAALA",
     location: "Al-Wajh (SV), Saudi Arabia",
     capacity: "15 MLD",
     type: "Desalination project",
-    details:
-      "Listed project reference in the supplied CV. The CV identifies the project location and stated capacity; it does not specify individual duties for this project.",
+    details: CV_NOTE,
   },
   {
     name: "NOMAC",
     location: "Dammam 3rd Industrial City",
     capacity: "2.5 MLD",
     type: "Water treatment project",
-    details:
-      "Listed project reference in the supplied CV. The CV identifies the project location and stated capacity; it does not specify individual duties for this project.",
+    details: CV_NOTE,
   },
   {
     name: "SEC",
     location: "Dammam 3rd Industrial City",
     capacity: "2.5 MLD",
     type: "Water treatment project",
-    details:
-      "Listed project reference in the supplied CV. The CV identifies the project location and stated capacity; it does not specify individual duties for this project.",
+    details: CV_NOTE,
   },
   {
     name: "KAIA",
     location: "Jeddah Airport, Saudi Arabia",
     capacity: "2 MLD",
     type: "Water treatment project",
-    details:
-      "Listed project reference in the supplied CV. The CV identifies the project location and stated capacity; it does not specify individual duties for this project.",
+    details: CV_NOTE,
   },
   {
     name: "NRC – 13, 14, 25",
@@ -81,11 +95,12 @@ const projects = [
   },
 ];
 
+const projectFilters = ["All", "Water treatment", "Desalination", "Biological"];
+
 const skills = [
   {
     icon: Waves,
     title: "RO Process Operations",
-    category: "Process",
     detail:
       "SWRO & BWRO systems, intake and pretreatment, DAF / UF / DMF / MMF, cartridge filtration, high-pressure pumps, RO membrane systems, ERD / PX, post-treatment and CIP.",
     points: [
@@ -98,7 +113,6 @@ const skills = [
   {
     icon: Gauge,
     title: "Automation & Control",
-    category: "Control",
     detail:
       "SCADA monitoring, PLC interfaces, process monitoring, alarm response and emergency response.",
     points: [
@@ -111,7 +125,6 @@ const skills = [
   {
     icon: Droplets,
     title: "Water Chemistry & Dosing",
-    category: "Chemistry",
     detail:
       "pH, TDS, conductivity, residual chlorine, chemical dosing and CO₂ systems.",
     points: [
@@ -124,7 +137,6 @@ const skills = [
   {
     icon: Wrench,
     title: "Maintenance & Troubleshooting",
-    category: "Maintenance",
     detail:
       "Routine inspections, preventive and corrective maintenance support, equipment troubleshooting and abnormal-condition response.",
     points: [
@@ -137,7 +149,6 @@ const skills = [
   {
     icon: ShieldCheck,
     title: "Safety & Documentation",
-    category: "Safety",
     detail:
       "HSE practices, SOP compliance, LOTO awareness, shift logbooks, operating records and daily reports.",
     points: [
@@ -150,7 +161,6 @@ const skills = [
   {
     icon: Settings2,
     title: "Plant Equipment",
-    category: "Equipment",
     detail:
       "High-pressure pumps, cartridge / micron filters, RO membrane systems and chemical dosing equipment.",
     points: [
@@ -166,12 +176,14 @@ const stages = [
   {
     name: "Intake",
     short: "Raw water",
+    icon: Waves,
     desc: "Raw seawater collection and initial screening. Intake conditions influence the loading on downstream pretreatment.",
     checks: ["Intake flow", "Screening condition", "Feed-water observations"],
   },
   {
     name: "Pretreatment",
     short: "Conditioning",
+    icon: Workflow,
     desc: "Pretreatment conditions the feed water and helps protect downstream filtration and RO membranes.",
     checks: [
       "Pretreatment operation",
@@ -182,6 +194,7 @@ const stages = [
   {
     name: "MMF / Cartridge",
     short: "Filtration",
+    icon: Workflow,
     desc: "Media and cartridge filtration remove suspended particles before the high-pressure RO section.",
     checks: [
       "Filter differential pressure",
@@ -192,6 +205,7 @@ const stages = [
   {
     name: "High-pressure pump",
     short: "Pressure",
+    icon: Gauge,
     desc: "The high-pressure pump supplies the pressure required by the RO membrane system.",
     checks: [
       "Discharge pressure",
@@ -202,6 +216,7 @@ const stages = [
   {
     name: "RO membrane",
     short: "Separation",
+    icon: Droplets,
     desc: "The RO membrane separates a permeate stream from the concentrated reject stream. Monitor operating conditions and water quality.",
     checks: [
       "Feed / permeate pressure",
@@ -212,6 +227,7 @@ const stages = [
   {
     name: "Post-treatment",
     short: "Product water",
+    icon: Workflow,
     desc: "Permeate is conditioned and checked against the plant's required product-water quality criteria.",
     checks: [
       "Product-water quality",
@@ -240,7 +256,7 @@ const career = [
     date: "NOV 2019 — JUL 2020",
     role: "Instrument Technician",
     company: "SAIPEM",
-    duration: "",
+    duration: "9 months",
     bullets: [
       "Installed and calibrated field instruments, including pressure, temperature and level transmitters.",
       "Managed specialized tools and maintenance documentation while following safety protocols and company standards.",
@@ -248,8 +264,16 @@ const career = [
   },
 ];
 
+// Demo values only. Feed pressure of a SWRO membrane train is far higher
+// (typically 50-70 bar), so this panel shows the pretreatment section.
 const demoMetrics = [
-  { label: "Feed pressure", value: "3.2", unit: "bar", status: "Normal" },
+  {
+    label: "Pretreatment pressure",
+    value: "3.2",
+    alarmValue: "4.8",
+    unit: "bar",
+    status: "Normal",
+  },
   { label: "Feed flow", value: "128", unit: "m³/h", status: "Normal" },
   {
     label: "Permeate conductivity",
@@ -260,6 +284,11 @@ const demoMetrics = [
   { label: "Tank level", value: "76", unit: "%", status: "Normal" },
 ];
 
+const trendNormal =
+  "M0 77 L45 74 L90 76 L135 68 L180 71 L225 63 L270 66 L315 59 L360 62 L405 54 L450 57 L495 50 L560 52";
+const trendAlarm =
+  "M0 94 L45 88 L90 84 L135 81 L180 77 L225 72 L270 66 L315 62 L360 49 L405 35 L450 22 L495 14 L560 9";
+
 export default function Home() {
   const [activeSkill, setActiveSkill] = useState<number | null>(null);
   const [activeStage, setActiveStage] = useState(0);
@@ -269,6 +298,22 @@ export default function Home() {
   const [simRunning, setSimRunning] = useState(true);
   const [alarm, setAlarm] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Close the mobile menu with Escape and lock page scroll while it is open.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previous;
+    };
+  }, [menuOpen]);
 
   const filteredProjects = useMemo(
     () =>
@@ -282,18 +327,20 @@ export default function Home() {
 
   async function copyEmail() {
     try {
-      await navigator.clipboard.writeText("jahidjob5@outlook.com");
+      await navigator.clipboard.writeText(EMAIL);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1800);
     } catch {
-      window.location.href = "mailto:jahidjob5@outlook.com";
+      window.location.href = `mailto:${EMAIL}`;
     }
   }
+
+  const stage = stages[activeStage];
 
   return (
     <main>
       <header className="topbar">
-        <a className="brand" href="#home">
+        <a className="brand" href="#home" onClick={() => setMenuOpen(false)}>
           <span className="brand-mark">
             <Droplets size={19} />
           </span>
@@ -302,19 +349,38 @@ export default function Home() {
           </span>
         </a>
         <nav className="nav" aria-label="Main navigation">
-          <a href="#about">About</a>
-          <a href="#expertise">Expertise</a>
-          <a href="#experience">Experience</a>
-          <a href="#projects">Projects</a>
-          <a href="#process">RO Process</a>
-          <a href="#contact">Contact</a>
+          {navLinks.map((l) => (
+            <a key={l.href} href={l.href}>
+              {l.label}
+            </a>
+          ))}
         </nav>
         <a className="nav-cta" href="#contact">
           Let&apos;s connect <ArrowUpRight size={15} />
         </a>
-        <a className="mobile-menu" href="#contact" aria-label="Go to contact">
-          <Menu />
-        </a>
+        <button
+          type="button"
+          className="mobile-menu"
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-nav"
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          {menuOpen ? <X /> : <Menu />}
+        </button>
+        {menuOpen && (
+          <nav
+            id="mobile-nav"
+            className="mobile-nav"
+            aria-label="Mobile navigation"
+          >
+            {navLinks.map((l) => (
+              <a key={l.href} href={l.href} onClick={() => setMenuOpen(false)}>
+                {l.label}
+              </a>
+            ))}
+          </nav>
+        )}
       </header>
 
       <section className="hero section-wrap" id="home">
@@ -335,10 +401,30 @@ export default function Home() {
             execution.
           </p>
           <div className="hero-actions">
-            <a className="btn btn-primary" href="#contact">
-              Contact me <ArrowUpRight size={17} />
+            <a
+              className="btn btn-primary"
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Contact me on WhatsApp
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="17"
+                height="17"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
+                <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1" />
+              </svg>
             </a>
-            <a className="btn btn-outline" href="resume-Mohd_Jahidul_Islam-Water_Treatment_Expert.pdf" download>
+            <a className="btn btn-outline" href={CV_URL} download>
               Download CV <Download size={16} />
             </a>
           </div>
@@ -446,11 +532,11 @@ export default function Home() {
                 <span>Years in water operations</span>
               </div>
               <div>
-                <strong>6</strong>
+                <strong>{projects.length}</strong>
                 <span>Listed project references</span>
               </div>
               <div>
-                <strong>2</strong>
+                <strong>{career.length}</strong>
                 <span>Company experiences</span>
               </div>
             </div>
@@ -483,6 +569,7 @@ export default function Home() {
                   key={skill.title}
                 >
                   <button
+                    type="button"
                     className="skill-button"
                     onClick={() => setActiveSkill(open ? null : i)}
                     aria-expanded={open}
@@ -533,6 +620,7 @@ export default function Home() {
               <div className={`timeline-marker ${i ? "muted" : ""}`} />
               <div className="timeline-body">
                 <button
+                  type="button"
                   className="job-toggle"
                   onClick={() => setExpandedJob(expandedJob === i ? -1 : i)}
                   aria-expanded={expandedJob === i}
@@ -587,61 +675,68 @@ export default function Home() {
             role="group"
             aria-label="Filter projects"
           >
-            {["All", "Water treatment", "Desalination", "Biological"].map(
-              (filter) => (
-                <button
-                  key={filter}
-                  className={projectFilter === filter ? "filter-active" : ""}
-                  onClick={() => {
-                    setProjectFilter(filter);
-                    setActiveProject(null);
-                  }}
-                >
-                  {filter}
-                </button>
-              ),
-            )}
+            {projectFilters.map((filter) => (
+              <button
+                type="button"
+                key={filter}
+                className={projectFilter === filter ? "filter-active" : ""}
+                aria-pressed={projectFilter === filter}
+                onClick={() => {
+                  setProjectFilter(filter);
+                  setActiveProject(null);
+                }}
+              >
+                {filter}
+              </button>
+            ))}
           </div>
           <div className="project-list">
-            {filteredProjects.map((p) => (
-              <article
-                className={`project-row ${activeProject === p.originalIndex ? "project-selected" : ""}`}
-                key={p.name}
-              >
-                <button
-                  className="project-main"
-                  onClick={() =>
-                    setActiveProject(
-                      activeProject === p.originalIndex
-                        ? null
-                        : p.originalIndex,
-                    )
-                  }
-                  aria-expanded={activeProject === p.originalIndex}
+            {filteredProjects.length === 0 && (
+              <p className="project-note">
+                No projects in this category. Choose another filter.
+              </p>
+            )}
+            {filteredProjects.map((p) => {
+              const selected = activeProject === p.originalIndex;
+              return (
+                <article
+                  className={`project-row ${selected ? "project-selected" : ""}`}
+                  key={p.name}
                 >
-                  <span className="project-index">0{p.originalIndex + 1}</span>
-                  <div className="project-name">
-                    <h3>{p.name}</h3>
-                    <span>{p.type}</span>
-                  </div>
-                  <div className="project-location">
-                    <MapPin size={14} />
-                    {p.location}
-                  </div>
-                  <div className="project-capacity">
-                    <span>CAPACITY / TYPE</span>
-                    <b>{p.capacity}</b>
-                  </div>
-                  <ChevronRight className="project-arrow" size={18} />
-                </button>
-                {activeProject === p.originalIndex && (
-                  <div className="project-detail">
-                    <b>Project reference</b>
-                    <p>{p.details}</p>
-                  </div>
-                )}
-              </article>
-            ))}
+                  <button
+                    type="button"
+                    className="project-main"
+                    onClick={() =>
+                      setActiveProject(selected ? null : p.originalIndex)
+                    }
+                    aria-expanded={selected}
+                  >
+                    <span className="project-index">
+                      0{p.originalIndex + 1}
+                    </span>
+                    <div className="project-name">
+                      <h3>{p.name}</h3>
+                      <span>{p.type}</span>
+                    </div>
+                    <div className="project-location">
+                      <MapPin size={14} />
+                      {p.location}
+                    </div>
+                    <div className="project-capacity">
+                      <span>CAPACITY / TYPE</span>
+                      <b>{p.capacity}</b>
+                    </div>
+                    <ChevronRight className="project-arrow" size={18} />
+                  </button>
+                  {selected && (
+                    <div className="project-detail">
+                      <b>Project reference</b>
+                      <p>{p.details}</p>
+                    </div>
+                  )}
+                </article>
+              );
+            })}
           </div>
           <p className="project-note">
             Project names, locations and capacities / types are reproduced from
@@ -673,47 +768,43 @@ export default function Home() {
               role="group"
               aria-label="RO process stages"
             >
-              {stages.map((s, i) => (
-                <div className="process-node-wrap" key={s.name}>
-                  <button
-                    className={`process-node ${activeStage === i ? "node-active" : ""}`}
-                    onClick={() => setActiveStage(i)}
-                    aria-pressed={activeStage === i}
-                  >
-                    <span className="node-number">0{i + 1}</span>
-                    <span className="node-symbol">
-                      {i === 0 ? (
-                        <Waves />
-                      ) : i === 3 ? (
-                        <Gauge />
-                      ) : i === 4 ? (
-                        <Droplets />
-                      ) : (
-                        <Workflow />
-                      )}
-                    </span>
-                    <b>{s.name}</b>
-                    <small>{s.short}</small>
-                  </button>
-                  {i !== stages.length - 1 && (
-                    <span className="process-connector" aria-hidden="true">
-                      →
-                    </span>
-                  )}
-                </div>
-              ))}
+              {stages.map((s, i) => {
+                const StageIcon = s.icon;
+                return (
+                  <div className="process-node-wrap" key={s.name}>
+                    <button
+                      type="button"
+                      className={`process-node ${activeStage === i ? "node-active" : ""}`}
+                      onClick={() => setActiveStage(i)}
+                      aria-pressed={activeStage === i}
+                    >
+                      <span className="node-number">0{i + 1}</span>
+                      <span className="node-symbol">
+                        <StageIcon />
+                      </span>
+                      <b>{s.name}</b>
+                      <small>{s.short}</small>
+                    </button>
+                    {i !== stages.length - 1 && (
+                      <span className="process-connector" aria-hidden="true">
+                        →
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-            <div className="stage-detail">
+            <div className="stage-detail" aria-live="polite">
               <div>
                 <span className="stage-label">
                   SELECTED STAGE / 0{activeStage + 1}
                 </span>
-                <h3>{stages[activeStage].name}</h3>
-                <p>{stages[activeStage].desc}</p>
+                <h3>{stage.name}</h3>
+                <p>{stage.desc}</p>
               </div>
               <div className="stage-checks">
                 <b>Example checks</b>
-                {stages[activeStage].checks.map((check) => (
+                {stage.checks.map((check) => (
                   <span key={check}>
                     <CheckCircle2 size={14} />
                     {check}
@@ -765,6 +856,7 @@ export default function Home() {
               </span>
               <div>
                 <button
+                  type="button"
                   onClick={() => {
                     setSimRunning(!simRunning);
                     setAlarm(false);
@@ -774,6 +866,7 @@ export default function Home() {
                   {simRunning ? "Pause demo" : "Resume demo"}
                 </button>
                 <button
+                  type="button"
                   onClick={() => {
                     setSimRunning(true);
                     setAlarm(false);
@@ -784,27 +877,30 @@ export default function Home() {
               </div>
             </div>
             <div className="scada-metrics">
-              {demoMetrics.map((m, i) => (
-                <div className="scada-metric" key={m.label}>
-                  <span>{m.label}</span>
-                  <strong>
-                    {simRunning ? (alarm && i === 0 ? "4.8" : m.value) : "—"}
-                    <small>{m.unit}</small>
-                  </strong>
-                  <em className={alarm && i === 0 ? "metric-warning" : ""}>
-                    {alarm && i === 0
-                      ? "High (simulated)"
-                      : simRunning
-                        ? m.status
-                        : "Paused"}
-                  </em>
-                </div>
-              ))}
+              {demoMetrics.map((m) => {
+                const inAlarm = alarm && !!m.alarmValue;
+                return (
+                  <div className="scada-metric" key={m.label}>
+                    <span>{m.label}</span>
+                    <strong>
+                      {simRunning ? (inAlarm ? m.alarmValue : m.value) : "—"}
+                      <small>{m.unit}</small>
+                    </strong>
+                    <em className={inAlarm ? "metric-warning" : ""}>
+                      {inAlarm
+                        ? "High (simulated)"
+                        : simRunning
+                          ? m.status
+                          : "Paused"}
+                    </em>
+                  </div>
+                );
+              })}
             </div>
             <div className="scada-lower">
               <div className="scada-trend">
                 <div className="scada-panel-title">
-                  PROCESS TREND <span>ILLUSTRATIVE</span>
+                  PRETREATMENT PRESSURE TREND <span>ILLUSTRATIVE</span>
                 </div>
                 <div className="trend-chart">
                   <div className="trend-y">
@@ -816,7 +912,7 @@ export default function Home() {
                   <svg
                     viewBox="0 0 560 130"
                     role="img"
-                    aria-label="Illustrative pressure trend line"
+                    aria-label="Illustrative pretreatment pressure trend line"
                   >
                     <path
                       d="M0 24 H560 M0 58 H560 M0 92 H560 M0 126 H560"
@@ -825,26 +921,18 @@ export default function Home() {
                       fill="none"
                     />
                     <path
-                      d={
-                        alarm
-                          ? "M0 94 L45 88 L90 84 L135 81 L180 77 L225 72 L270 66 L315 62 L360 49 L405 35 L450 22 L495 14 L560 9"
-                          : "M0 77 L45 74 L90 76 L135 68 L180 71 L225 63 L270 66 L315 59 L360 62 L405 54 L450 57 L495 50 L560 52"
+                      d={`${alarm ? trendAlarm : trendNormal} L560 130 L0 130 Z`}
+                      fill={
+                        alarm ? "rgba(255,179,107,.08)" : "rgba(91,212,208,.08)"
                       }
+                    />
+                    <path
+                      d={alarm ? trendAlarm : trendNormal}
                       fill="none"
                       stroke={alarm ? "#ffb36b" : "#5bd4d0"}
                       strokeWidth="3"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                    />
-                    <path
-                      d={
-                        alarm
-                          ? "M0 94 L45 88 L90 84 L135 81 L180 77 L225 72 L270 66 L315 62 L360 49 L405 35 L450 22 L495 14 L560 9 L560 130 L0 130 Z"
-                          : "M0 77 L45 74 L90 76 L135 68 L180 71 L225 63 L270 66 L315 59 L360 62 L405 54 L450 57 L495 50 L560 52 L560 130 L0 130 Z"
-                      }
-                      fill={
-                        alarm ? "rgba(255,179,107,.08)" : "rgba(91,212,208,.08)"
-                      }
                     />
                   </svg>
                 </div>
@@ -858,11 +946,16 @@ export default function Home() {
               </div>
               <div className="scada-alarm">
                 <div className="scada-panel-title">ALARM SIMULATION</div>
-                <div className={`alarm-box ${alarm ? "alarm-active" : ""}`}>
+                <div
+                  className={`alarm-box ${alarm ? "alarm-active" : ""}`}
+                  role="status"
+                >
                   <CircleAlert size={21} />
                   <div>
                     <b>
-                      {alarm ? "High feed pressure" : "No active demo alarms"}
+                      {alarm
+                        ? "High pretreatment pressure"
+                        : "No active demo alarms"}
                     </b>
                     <span>
                       {alarm
@@ -872,6 +965,7 @@ export default function Home() {
                   </div>
                 </div>
                 <button
+                  type="button"
                   className="alarm-trigger"
                   onClick={() => {
                     setAlarm(!alarm);
@@ -895,7 +989,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-wrap section credentials">
+      <section className="section-wrap section credentials" id="credentials">
         <div className="section-kicker">07 — CREDENTIALS</div>
         <h2>
           Ready for the next
@@ -962,9 +1056,10 @@ export default function Home() {
               </span>
               <div>
                 <small>EMAIL</small>
-                <a href="mailto:jahidjob5@outlook.com">jahidjob5@outlook.com</a>
+                <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
               </div>
               <button
+                type="button"
                 className="copy-btn"
                 onClick={copyEmail}
                 aria-label="Copy email address"
@@ -972,17 +1067,7 @@ export default function Home() {
                 {copied ? <Check size={16} /> : <Copy size={16} />}
               </button>
             </div>
-            <div className="contact-item">
-              <span>
-                <Phone size={17} />
-              </span>
-              <div>
-                <small>PHONE / WHATSAPP</small>
-                <a href="tel:+966578277451">+966 57 827 7451</a>
-                <a href="tel:+966559293845">+966 55 929 3845</a>
-              </div>
-              <ArrowUpRight size={16} />
-            </div>
+
             <div className="contact-item">
               <span>
                 <MapPin size={17} />
@@ -993,8 +1078,8 @@ export default function Home() {
               </div>
             </div>
             <a
-              className="btn btn-primary contact-btn"
-              href="mailto:jahidjob5@outlook.com?subject=Water%20Plant%20Operator%20Opportunity"
+              className="btn btn-primary contact-btn "
+              href={`mailto:${EMAIL}?subject=Water%20Plant%20Operator%20Opportunity`}
             >
               Discuss an opportunity <ArrowUpRight size={17} />
             </a>
