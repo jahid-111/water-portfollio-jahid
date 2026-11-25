@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Mono, DM_Sans, Manrope } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import CustomCursor from "./CustomCursor";
 
@@ -42,6 +43,8 @@ const ogImage = {
   alt: `${personName} - SWRO & Water Plant Operator`,
   type: "image/png",
 };
+
+const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
 /* ---------- Metadata ---------- */
 export const metadata: Metadata = {
@@ -160,7 +163,8 @@ export default function RootLayout({
             __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
           }}
         />
+        {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
       </body>
     </html>
   );
-} 
+}

@@ -1,0 +1,3 @@
+{"timestamp":"00:00:00.818","source":"Server","level":"LOG","message":""}
+{"timestamp":"00:00:30.267","source":"Server","level":"LOG","message":"✓ Compiled in 25ms"}
+{"timestamp":"00:00:40.145","source":"Server","level":"LOG","message":"✓ Compiled in 12ms"}
